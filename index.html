@@ -45,21 +45,21 @@
 
     const TableauClassement = () => {
       const [donnees, setDonnees] = useState([
-        { equipe: 'FRANCE', pilote: 'ROMAIN FEBVRE', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'FRANCE', pilote: 'ROMAIN FEBVRE', race1: 1, race2: 1, race3: 1, pireResultat: 0, totalPilote: 3 },
         { equipe: 'FRANCE', pilote: 'MATHIS VALIN', race1: 2, race2: 2, race3: 2, pireResultat: 0, totalPilote: 6 },
         { equipe: 'FRANCE', pilote: 'MAXIME RENAUX', race1: 3, race2: 3, race3: 3, pireResultat: 0, totalPilote: 9 },
         { equipe: 'AUSTRALIE', pilote: 'JETT LAWRENCE', race1: 4, race2: 4, race3: 4, pireResultat: 0, totalPilote: 12 },
         { equipe: 'AUSTRALIE', pilote: 'HUNTER LAWRENCE', race1: 5, race2: 5, race3: 5, pireResultat: 0, totalPilote: 15 },
         { equipe: 'AUSTRALIE', pilote: 'KYLE WEBSTER', race1: 6, race2: 6, race3: 6, pireResultat: 0, totalPilote: 18 },
-        { equipe: 'USA', pilote: 'ROMAIN FEBVRE', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
-        { equipe: 'USA', pilote: 'MAXIME RENAUX', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
-        { equipe: 'USA', pilote: 'MATHIS VALIN', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
-        { equipe: 'BELGIQUE', pilote: 'ROMAIN FEBVRE', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
-        { equipe: 'BELGIQUE', pilote: 'MAXIME RENAUX', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
-        { equipe: 'BELGIQUE', pilote: 'MATHIS VALIN', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
-        { equipe: 'PAYS-BAS', pilote: 'ROMAIN FEBVRE', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
-        { equipe: 'PAYS-BAS', pilote: 'MAXIME RENAUX', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
-        { equipe: 'PAYS-BAS', pilote: 'MATHIS VALIN', race1: 0, race2: 0, race3: 0, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'USA', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'USA', pilote: 'MAXIME RENAUX', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'USA', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'BELGIQUE', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'BELGIQUE', pilote: 'MAXIME RENAUX', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'BELGIQUE', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'PAYS-BAS', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'PAYS-BAS', pilote: 'MAXIME RENAUX', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'PAYS-BAS', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
       ]);
 
       const calculerTotalEquipe = (equipe) => {
@@ -86,9 +86,14 @@
 
       const obtenirEquipesUniques = () => {
         const equipes = [...new Set(donnees.map(d => d.equipe))];
-        return equipes
-          .filter(equipe => calculerTotalEquipe(equipe).sommeAvantRetrait > 0)
-          .sort((a, b) => calculerTotalEquipe(a).total - calculerTotalEquipe(b).total);
+        return equipes.sort((a, b) => {
+          const totalA = calculerTotalEquipe(a).total;
+          const totalB = calculerTotalEquipe(b).total;
+          if (totalA === 0 && totalB === 0) return 0;
+          if (totalA === 0) return 1;
+          if (totalB === 0) return -1;
+          return totalA - totalB;
+        });
       };
 
       const modifierValeur = (index, champ, valeur) => {
