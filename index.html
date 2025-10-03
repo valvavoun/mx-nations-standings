@@ -244,8 +244,7 @@
                                 </td>
                               )}
                               <td className="border-2 border-gray-700 px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-white font-bold uppercase text-xs sm:text-sm">{pilote.pilote}</td>
-                              <td className={`border-2 border-gray-700 w-16 px-1 py-1 sm:py-2 ${estPireRace1 ? 'bg-red-900 bg-opacity-50' : ''}`}>
-                                <input
+                              <td className={`border-2 border-gray-700 w-20 px-1 py-1 sm:py-2 ${estPireRace1 ? 'bg-red-900 bg-opacity-50' : ''}`}>                                <input
                                   type="number"
                                   inputMode="numeric"
                                   value={pilote.race1 ?? ''}
@@ -253,8 +252,7 @@
                                   className={`w-full text-center border-2 ${estPireRace1 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                 />
                               </td>
-                              <td className={`border-2 border-gray-700 w-16 px-1 py-1 sm:py-2 ${estPireRace2 ? 'bg-red-900 bg-opacity-50' : ''}`}>
-                                <input
+                              <td className={`border-2 border-gray-700 w-20 px-1 py-1 sm:py-2 ${estPireRace2 ? 'bg-red-900 bg-opacity-50' : ''}`}>                                <input
                                   type="number"
                                   inputMode="numeric"
                                   value={pilote.race2 ?? ''}
@@ -262,7 +260,7 @@
                                   className={`w-full text-center border-2 ${estPireRace2 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                 />
                               </td>
-                              <td className={`border-2 border-gray-700 w-16 px-1 py-1 sm:py-2 ${estPireRace3 ? 'bg-red-900 bg-opacity-50' : ''}`}>
+                              <td className={`border-2 border-gray-700 w-20 px-1 py-1 sm:py-2 ${estPireRace3 ? 'bg-red-900 bg-opacity-50' : ''}`}>
                                 <input
                                   type="number"
                                   inputMode="numeric"
@@ -271,7 +269,7 @@
                                   className={`w-full text-center border-2 ${estPireRace3 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                 />
                               </td>
-                              <td className={`border-2 border-gray-700 px-1 sm:px-2 md:px-4 py-1 sm:py-2 text-center font-black text-base sm:text-lg md:text-xl ${(estPireRace1 || estPireRace2 || estPireRace3) ? 'text-red-500 bg-red-900 bg-opacity-30' : 'text-gray-600'}`}>
+                              <td className={`border-2 border-gray-700 w-20 px-1 sm:px-2 md:px-4 py-1 sm:py-2 text-center font-black text-base sm:text-lg md:text-xl ${(estPireRace1 || estPireRace2 || estPireRace3) ? 'text-red-500 bg-red-900 bg-opacity-30' : 'text-gray-600'}`}>
                                 {(estPireRace1 || estPireRace2 || estPireRace3) ? stats.pire : '-'}
                               </td>
                               <td className="border-2 border-gray-700 px-1 sm:px-2 md:px-4 py-1 sm:py-2 text-center font-black text-lg sm:text-xl md:text-2xl text-yellow-400">
