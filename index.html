@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MX Nations Championship 2025</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .5; }
+    }
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // Icônes Lucide en SVG
+    const Trophy = ({ className }) => (
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+      </svg>
+    );
+
+    const Flag = ({ className }) => (
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+      </svg>
+    );
+
+    const Flame = ({ className }) => (
+      <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+      </svg>
+    );
+
+    const TableauClassement = () => {
+      const [donnees, setDonnees] = useState([
+        { equipe: 'FRANCE', pilote: 'ROMAIN FEBVRE', race1: 1, race2: 1, race3: 1, pireResultat: 0, totalPilote: 3 },
+        { equipe: 'FRANCE', pilote: 'MATHIS VALIN', race1: 2, race2: 2, race3: 2, pireResultat: 0, totalPilote: 6 },
+        { equipe: 'FRANCE', pilote: 'MAXIME RENAUX', race1: 3, race2: 3, race3: 3, pireResultat: 0, totalPilote: 9 },
+        { equipe: 'AUSTRALIE', pilote: 'JETT LAWRENCE', race1: 4, race2: 4, race3: 4, pireResultat: 0, totalPilote: 12 },
+        { equipe: 'AUSTRALIE', pilote: 'HUNTER LAWRENCE', race1: 5, race2: 5, race3: 5, pireResultat: 0, totalPilote: 15 },
+        { equipe: 'AUSTRALIE', pilote: 'KYLE WEBSTER', race1: 6, race2: 6, race3: 6, pireResultat: 0, totalPilote: 18 },
+        { equipe: 'USA', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'USA', pilote: 'MAXIME RENAUX', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'USA', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'BELGIQUE', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'BELGIQUE', pilote: 'MAXIME RENAUX', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'BELGIQUE', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'PAYS-BAS', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'PAYS-BAS', pilote: 'MAXIME RENAUX', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+        { equipe: 'PAYS-BAS', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+      ]);
+
+      const calculerTotalEquipe = (equipe) => {
+        const pilotesEquipe = donnees.filter(d => d.equipe === equipe);
+        
+        const tousResultats = [];
+        pilotesEquipe.forEach(pilote => {
+          if (pilote.race1 !== null) tousResultats.push({ valeur: pilote.race1, pilote: pilote.pilote, race: 'race1', index: pilote.originalIndex });
+          if (pilote.race2 !== null) tousResultats.push({ valeur: pilote.race2, pilote: pilote.pilote, race: 'race2', index: pilote.originalIndex });
+          if (pilote.race3 !== null) tousResultats.push({ valeur: pilote.race3, pilote: pilote.pilote, race: 'race3', index: pilote.originalIndex });
+        });
+        
+        const pireResultat = tousResultats.length > 0 ? Math.max(...tousResultats.map(r => r.valeur)) : 0;
+        const infoPireResultat = tousResultats.find(r => r.valeur === pireResultat);
+        const sommeTotal = tousResultats.reduce((sum, r) => sum + r.valeur, 0);
+        
+        return { 
+          total: sommeTotal - pireResultat, 
+          pire: pireResultat, 
+          sommeAvantRetrait: sommeTotal,
+          infoPire: infoPireResultat
+        };
+      };
+
+      const obtenirEquipesUniques = () => {
+        const equipes = [...new Set(donnees.map(d => d.equipe))];
+        return equipes
+          .filter(equipe => calculerTotalEquipe(equipe).sommeAvantRetrait > 0)
+          .sort((a, b) => calculerTotalEquipe(a).total - calculerTotalEquipe(b).total);
+      };
+
+      const modifierValeur = (index, champ, valeur) => {
+        const nouvellesDonnees = [...donnees];
+        nouvellesDonnees[index][champ] = valeur === '' ? null : parseInt(valeur);
+        
+        const ligne = nouvellesDonnees[index];
+        const races = [ligne.race1, ligne.race2, ligne.race3].filter(r => r !== null);
+        nouvellesDonnees[index].totalPilote = races.reduce((sum, r) => sum + r, 0);
+        
+        setDonnees(nouvellesDonnees);
+      };
+
+      const equipesTriees = obtenirEquipesUniques();
+
+      const getPodiumColor = (position) => {
+        if (position === 0) return 'from-yellow-400 via-yellow-500 to-yellow-600';
+        if (position === 1) return 'from-gray-300 via-gray-400 to-gray-500';
+        if (position === 2) return 'from-orange-400 via-orange-500 to-orange-600';
+        return 'from-red-600 via-red-700 to-red-800';
+      };
+
+      const getPodiumIcon = (position) => {
+        if (position === 0) return <Trophy className="w-8 h-8" />;
+        if (position === 1) return <Trophy className="w-7 h-7" />;
+        if (position === 2) return <Trophy className="w-6 h-6" />;
+        return <Flag className="w-5 h-5" />;
+      };
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6">
+          <div className="text-center mb-8 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 opacity-20 blur-3xl"></div>
+            <div className="relative">
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <Flame className="w-10 h-10 text-orange-500 animate-pulse" />
+                <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500 tracking-wider uppercase">
+                  MX Nations
+                </h1>
+                <Flame className="w-10 h-10 text-orange-500 animate-pulse" />
+              </div>
+              <p className="text-gray-400 text-xl font-bold tracking-widest uppercase">Championship 2025</p>
+            </div>
+          </div>
+
+          <div className="mb-10">
+            <h2 className="text-4xl font-black text-white mb-6 text-center uppercase tracking-wider flex items-center justify-center gap-3">
+              <Trophy className="w-10 h-10 text-yellow-500" />
+              Classement Final
+              <Trophy className="w-10 h-10 text-yellow-500" />
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+              {equipesTriees.map((equipe, index) => {
+                const stats = calculerTotalEquipe(equipe);
+                return (
+                  <div 
+                    key={equipe} 
+                    className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${getPodiumColor(index)} p-1 transform transition-all hover:scale-105 hover:rotate-1 shadow-2xl`}
+                  >
+                    <div className="bg-gray-900 rounded-lg p-6 h-full">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="text-white">
+                            {getPodiumIcon(index)}
+                          </div>
+                          <span className="text-5xl font-black text-white">#{index + 1}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+                            {stats.total}
+                          </div>
+                          <div className="text-xs text-gray-400 uppercase font-bold">Points</div>
+                        </div>
+                      </div>
+                      <h3 className="text-2xl font-black text-white uppercase tracking-wide">{equipe}</h3>
+                      {stats.pire > 0 && (
+                        <div className="mt-2 text-sm text-red-400 font-bold">
+                          Pire retiré: -{stats.pire}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-wider text-center">
+              Résultats Détaillés
+            </h2>
+            <div className="overflow-x-auto rounded-2xl shadow-2xl">
+              <table className="w-full border-collapse bg-gray-800">
+                <thead>
+                  <tr className="bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600">
+                    <th className="border-2 border-gray-700 px-4 py-4 text-left font-black text-white uppercase tracking-wide">Équipe</th>
+                    <th className="border-2 border-gray-700 px-4 py-4 text-left font-black text-white uppercase tracking-wide">Pilote</th>
+                    <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Race 1</th>
+                    <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Race 2</th>
+                    <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Race 3</th>
+                    <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Pire</th>
+                    <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Total</th>
+                    <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-yellow-300 uppercase bg-gradient-to-r from-yellow-700 to-orange-700">Équipe</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {equipesTriees.map((equipe, equipeIndex) => {
+                    const pilotsEquipe = donnees
+                      .map((d, originalIndex) => ({ ...d, originalIndex }))
+                      .filter(d => d.equipe === equipe);
+                    const stats = calculerTotalEquipe(equipe);
+                    const pireResultatEquipe = stats.pire;
+                    
+                    return pilotsEquipe.map((pilote, piloteIndex) => (
+                      <tr 
+                        key={pilote.originalIndex} 
+                        className={`${equipeIndex % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'} hover:bg-gradient-to-r hover:from-orange-900 hover:to-red-900 transition-all duration-300`}
+                      >
+                        {piloteIndex === 0 && (
+                          <td 
+                            rowSpan={pilotsEquipe.length} 
+                            className="border-2 border-gray-700 px-4 py-3 font-black text-2xl text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 uppercase"
+                          >
+                            {equipe}
+                          </td>
+                        )}
+                        <td className="border-2 border-gray-700 px-4 py-2 text-white font-bold uppercase text-sm">{pilote.pilote}</td>
+                        <td className="border-2 border-gray-700 px-2 py-2">
+                          <input
+                            type="number"
+                            value={pilote.race1 ?? ''}
+                            onChange={(e) => modifierValeur(pilote.originalIndex, 'race1', e.target.value)}
+                            className="w-full text-center border-2 border-orange-600 bg-gray-700 text-white font-bold rounded-lg px-2 py-2 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-lg"
+                          />
+                        </td>
+                        <td className="border-2 border-gray-700 px-2 py-2">
+                          <input
+                            type="number"
+                            value={pilote.race2 ?? ''}
+                            onChange={(e) => modifierValeur(pilote.originalIndex, 'race2', e.target.value)}
+                            className="w-full text-center border-2 border-orange-600 bg-gray-700 text-white font-bold rounded-lg px-2 py-2 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-lg"
+                          />
+                        </td>
+                        <td className="border-2 border-gray-700 px-2 py-2">
+                          <input
+                            type="number"
+                            value={pilote.race3 ?? ''}
+                            onChange={(e) => modifierValeur(pilote.originalIndex, 'race3', e.target.value)}
+                            className="w-full text-center border-2 border-orange-600 bg-gray-700 text-white font-bold rounded-lg px-2 py-2 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-lg"
+                          />
+                        </td>
+                        <td className={`border-2 border-gray-700 px-4 py-2 text-center font-black text-xl ${pilote.totalPilote === pireResultatEquipe && pilote.totalPilote > 0 ? 'text-red-500 bg-red-900 bg-opacity-30' : 'text-gray-600'}`}>
+                          {pilote.totalPilote === pireResultatEquipe && pilote.totalPilote > 0 ? pilote.totalPilote : '-'}
+                        </td>
+                        <td className="border-2 border-gray-700 px-4 py-2 text-center font-black text-2xl text-yellow-400">
+                          {pilote.totalPilote}
+                        </td>
+                        {piloteIndex === 0 && (
+                          <td 
+                            rowSpan={pilotsEquipe.length} 
+                            className="border-2 border-gray-700 px-4 py-3 text-center font-black text-4xl bg-gradient-to-br from-yellow-600 to-orange-700 text-white"
+                          >
+                            {stats.total}
+                          </td>
+                        )}
+                      </tr>
+                    ));
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="text-center mt-10 text-gray-500 font-bold uppercase tracking-wider">
+            <Flag className="w-6 h-6 inline-block mr-2" />
+            Live Standings
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<TableauClassement />, document.getElementById('root'));
+  </script>
+</body>
+</html>
