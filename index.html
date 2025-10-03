@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>MX Nations Championship 2025</title>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -59,8 +58,7 @@
             </svg>
         );
 
-        const TableauClassement = () => {
-          const [donnees, setDonnees] = useState([
+        const donneesInitiales = [
             { equipe: 'FRANCE', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
             { equipe: 'FRANCE', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
             { equipe: 'FRANCE', pilote: 'MAXIME RENAUX', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
@@ -76,7 +74,14 @@
             { equipe: 'PAYS-BAS', pilote: 'GLENN COLDENHOFF', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
             { equipe: 'PAYS-BAS', pilote: 'KEY DE WOLF', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
             { equipe: 'PAYS-BAS', pilote: 'CALVIN VLAANDEREN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
-          ]);
+          ];
+
+        const TableauClassement = () => {
+          // Charger les données depuis le localStorage ou utiliser les données initiales
+          const [donnees, setDonnees] = useState(() => {
+            const donneesStockees = localStorage.getItem('mxNationsData');
+            return donneesStockees ? JSON.parse(donneesStockees) : donneesInitiales;
+          });
 
           const calculerTotalEquipe = (equipe) => {
             const pilotesEquipe = donnees.filter(d => d.equipe === equipe);
@@ -115,13 +120,24 @@
 
           const modifierValeur = (index, champ, valeur) => {
             const nouvellesDonnees = [...donnees];
-            nouvellesDonnees[index][champ] = valeur === '' ? null : parseInt(valeur);
-            
-            const ligne = nouvellesDonnees[index];
-            const races = [ligne.race1, ligne.race2, ligne.race3].filter(r => r !== null);
-            nouvellesDonnees[index].totalPilote = races.reduce((sum, r) => sum + r, 0);
+            if (champ === 'equipe' || champ === 'pilote') {
+              nouvellesDonnees[index][champ] = valeur;
+            } else {
+              nouvellesDonnees[index][champ] = valeur === '' ? null : parseInt(valeur);
+              
+              const ligne = nouvellesDonnees[index];
+              const races = [ligne.race1, ligne.race2, ligne.race3].filter(r => r !== null);
+              nouvellesDonnees[index].totalPilote = races.reduce((sum, r) => sum + r, 0);
+            }
             
             setDonnees(nouvellesDonnees);
+            // Sauvegarder dans le localStorage
+            localStorage.setItem('mxNationsData', JSON.stringify(nouvellesDonnees));
+          };
+
+          const reinitialiserDonnees = () => {
+            setDonnees(donneesInitiales);
+            localStorage.setItem('mxNationsData', JSON.stringify(donneesInitiales));
           };
 
           const equipesTriees = obtenirEquipesUniques();
@@ -152,7 +168,32 @@
                     </h1>
                     <Flame className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-orange-500 animate-pulse" />
                   </div>
-                  <p className="text-gray-400 text-sm sm:text-base md:text-xl font-bold tracking-widest uppercase">Championship 2025</p>
+                  <button
+                    onClick={() => {
+                      if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les scores ?')) {
+                        setDonnees(donneesInitiales);
+                        localStorage.removeItem('mxNationsData');
+                      }
+                    }}
+                    className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-50 group overflow-hidden rounded-full sm:rounded-lg px-3 py-3 sm:px-6 sm:py-2 bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 text-white font-black uppercase tracking-wider text-xs sm:text-base hover:shadow-xl transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 shadow-lg flex items-center justify-center"
+                  >
+                    <svg 
+                      className="w-5 h-5 block sm:hidden" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                      <path d="M3 12h6"></path>
+                      <path d="M3 12l3-3"></path>
+                      <path d="M3 12l3 3"></path>
+                    </svg>
+                    <span className="hidden sm:inline relative z-10">Réinitialiser</span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full sm:rounded-lg"></div>
+                  </button>
                 </div>
               </div>
 
@@ -238,38 +279,65 @@
                               {piloteIndex === 0 && (
                                 <td 
                                   rowSpan={pilotsEquipe.length} 
-                                  className="border-2 border-gray-700 px-2 sm:px-3 md:px-4 py-2 sm:py-3 font-black text-base sm:text-lg md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 uppercase"
+                                  className="border-2 border-gray-700 px-2 sm:px-3 md:px-4 py-2 sm:py-3"
                                 >
-                                  {equipe}
+                                  {piloteIndex === 0 && (
+                                    <input
+                                      type="text"
+                                      value={equipe}
+                                      onChange={(e) => {
+                                        const nouvellesDonnees = [...donnees];
+                                        const nouvelleEquipe = e.target.value.toUpperCase();
+                                        // Mettre à jour tous les pilotes de l'équipe
+                                        nouvellesDonnees.forEach((d, i) => {
+                                          if (d.equipe === equipe) {
+                                            nouvellesDonnees[i].equipe = nouvelleEquipe;
+                                          }
+                                        });
+                                        setDonnees(nouvellesDonnees);
+                                        localStorage.setItem('mxNationsData', JSON.stringify(nouvellesDonnees));
+                                      }}
+                                      className="w-full bg-transparent font-black text-base sm:text-lg md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 uppercase focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+                                    />
+                                  )}
                                 </td>
                               )}
-                              <td className="border-2 border-gray-700 px-2 sm:px-3 md:px-4 py-1 sm:py-2 text-white font-bold uppercase text-xs sm:text-sm">{pilote.pilote}</td>
-                              <td className={`border-2 border-gray-700 w-20 px-1 py-1 sm:py-2 ${estPireRace1 ? 'bg-red-900 bg-opacity-50' : ''}`}>                                <input
+                              <td className="border-2 border-gray-700 px-2 sm:px-3 md:px-4 py-1 sm:py-2">
+                                <input
+                                  type="text"
+                                  value={pilote.pilote}
+                                  onChange={(e) => modifierValeur(pilote.originalIndex, 'pilote', e.target.value)}
+                                  className="w-full bg-transparent text-white font-bold uppercase text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50"
+                                />
+                              </td>
+                              <td className={`border-2 border-gray-700 px-1 py-1 sm:py-2 ${estPireRace1 ? 'bg-red-900 bg-opacity-50' : ''}`}>
+                                <input
                                   type="number"
                                   inputMode="numeric"
                                   value={pilote.race1 ?? ''}
                                   onChange={(e) => modifierValeur(pilote.originalIndex, 'race1', e.target.value)}
-                                  className={`w-full text-center border-2 ${estPireRace1 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
+                                  className={`w-8 sm:w-full text-center border-2 ${estPireRace1 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                 />
                               </td>
-                              <td className={`border-2 border-gray-700 w-20 px-1 py-1 sm:py-2 ${estPireRace2 ? 'bg-red-900 bg-opacity-50' : ''}`}>                                <input
+                              <td className={`border-2 border-gray-700 px-1 py-1 sm:py-2 ${estPireRace2 ? 'bg-red-900 bg-opacity-50' : ''}`}>
+                                <input
                                   type="number"
                                   inputMode="numeric"
                                   value={pilote.race2 ?? ''}
                                   onChange={(e) => modifierValeur(pilote.originalIndex, 'race2', e.target.value)}
-                                  className={`w-full text-center border-2 ${estPireRace2 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
+                                  className={`w-8 sm:w-full text-center border-2 ${estPireRace2 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                 />
                               </td>
-                              <td className={`border-2 border-gray-700 w-20 px-1 py-1 sm:py-2 ${estPireRace3 ? 'bg-red-900 bg-opacity-50' : ''}`}>
+                              <td className={`border-2 border-gray-700 px-1 py-1 sm:py-2 ${estPireRace3 ? 'bg-red-900 bg-opacity-50' : ''}`}>
                                 <input
                                   type="number"
                                   inputMode="numeric"
                                   value={pilote.race3 ?? ''}
                                   onChange={(e) => modifierValeur(pilote.originalIndex, 'race3', e.target.value)}
-                                  className={`w-full text-center border-2 ${estPireRace3 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
+                                  className={`w-8 sm:w-full text-center border-2 ${estPireRace3 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                 />
                               </td>
-                              <td className={`border-2 border-gray-700 w-20 px-1 sm:px-2 md:px-4 py-1 sm:py-2 text-center font-black text-base sm:text-lg md:text-xl ${(estPireRace1 || estPireRace2 || estPireRace3) ? 'text-red-500 bg-red-900 bg-opacity-30' : 'text-gray-600'}`}>
+                              <td className={`border-2 border-gray-700 px-1 sm:px-2 md:px-4 py-1 sm:py-2 text-center font-black text-base sm:text-lg md:text-xl ${(estPireRace1 || estPireRace2 || estPireRace3) ? 'text-red-500 bg-red-900 bg-opacity-30' : 'text-gray-600'}`}>
                                 {(estPireRace1 || estPireRace2 || estPireRace3) ? stats.pire : '-'}
                               </td>
                               <td className="border-2 border-gray-700 px-1 sm:px-2 md:px-4 py-1 sm:py-2 text-center font-black text-lg sm:text-xl md:text-2xl text-yellow-400">
