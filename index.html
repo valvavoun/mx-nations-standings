@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MX Nations Championship 2025</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Lucide React icons as inline SVG components
+        const Trophy = ({ className }) => (
+            <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+            </svg>
+        );
+
+        const Flag = ({ className }) => (
+            <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" y1="22" x2="4" y2="15"></line>
+            </svg>
+        );
+
+        const Flame = ({ className }) => (
+            <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+            </svg>
+        );
+
+        const TableauClassement = () => {
+          const [donnees, setDonnees] = useState([
+            { equipe: 'FRANCE', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'FRANCE', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'FRANCE', pilote: 'MAXIME RENAUX', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'AUSTRALIE', pilote: 'JETT LAWRENCE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'AUSTRALIE', pilote: 'KYLE WEBSTER', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'AUSTRALIE', pilote: 'HUNTER LAWRENCE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'USA', pilote: 'ELI TOMAC', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'USA', pilote: 'JUSTIN COOPER', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'USA', pilote: 'RJ HAMPSHIRE', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'BELGIQUE', pilote: 'LUCAS COENEN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'BELGIQUE', pilote: 'SACHA COENEN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'BELGIQUE', pilote: 'LIAM EVERTS', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'PAYS-BAS', pilote: 'GLENN COLDENHOFF', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'PAYS-BAS', pilote: 'KEY DE WOLF', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+            { equipe: 'PAYS-BAS', pilote: 'CALVIN VLAANDEREN', race1: null, race2: null, race3: null, pireResultat: 0, totalPilote: 0 },
+          ]);
+
+          const calculerTotalEquipe = (equipe) => {
+            const pilotesEquipe = donnees.filter(d => d.equipe === equipe);
+            
+            const tousResultats = [];
+            pilotesEquipe.forEach(pilote => {
+              if (pilote.race1 !== null) tousResultats.push({ valeur: pilote.race1, pilote: pilote.pilote, race: 'race1', index: pilote.originalIndex });
+              if (pilote.race2 !== null) tousResultats.push({ valeur: pilote.race2, pilote: pilote.pilote, race: 'race2', index: pilote.originalIndex });
+              if (pilote.race3 !== null) tousResultats.push({ valeur: pilote.race3, pilote: pilote.pilote, race: 'race3', index: pilote.originalIndex });
+            });
+            
+            const pireResultat = tousResultats.length > 0 ? Math.max(...tousResultats.map(r => r.valeur)) : 0;
+            const infoPireResultat = tousResultats.find(r => r.valeur === pireResultat);
+            
+            const sommeTotal = tousResultats.reduce((sum, r) => sum + r.valeur, 0);
+            
+            return { 
+              total: sommeTotal - pireResultat, 
+              pire: pireResultat, 
+              sommeAvantRetrait: sommeTotal,
+              infoPire: infoPireResultat
+            };
+          };
+
+          const obtenirEquipesUniques = () => {
+            const equipes = [...new Set(donnees.map(d => d.equipe))];
+            return equipes.sort((a, b) => {
+              const totalA = calculerTotalEquipe(a).total;
+              const totalB = calculerTotalEquipe(b).total;
+              if (totalA === 0 && totalB === 0) return 0;
+              if (totalA === 0) return 1;
+              if (totalB === 0) return -1;
+              return totalA - totalB;
+            });
+          };
+
+          const modifierValeur = (index, champ, valeur) => {
+            const nouvellesDonnees = [...donnees];
+            nouvellesDonnees[index][champ] = valeur === '' ? null : parseInt(valeur);
+            
+            const ligne = nouvellesDonnees[index];
+            const races = [ligne.race1, ligne.race2, ligne.race3].filter(r => r !== null);
+            nouvellesDonnees[index].totalPilote = races.reduce((sum, r) => sum + r, 0);
+            
+            setDonnees(nouvellesDonnees);
+          };
+
+          const equipesTriees = obtenirEquipesUniques();
+
+          const getPodiumColor = (position) => {
+            if (position === 0) return 'from-yellow-400 via-yellow-500 to-yellow-600';
+            if (position === 1) return 'from-gray-300 via-gray-400 to-gray-500';
+            if (position === 2) return 'from-orange-400 via-orange-500 to-orange-600';
+            return 'from-red-600 via-red-700 to-red-800';
+          };
+
+          const getPodiumIcon = (position) => {
+            if (position === 0) return <Trophy className="w-8 h-8" />;
+            if (position === 1) return <Trophy className="w-7 h-7" />;
+            if (position === 2) return <Trophy className="w-6 h-6" />;
+            return <Flag className="w-5 h-5" />;
+          };
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6">
+              <div className="text-center mb-8 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 opacity-20 blur-3xl"></div>
+                <div className="relative">
+                  <div className="flex items-center justify-center gap-3 mb-2">
+                    <Flame className="w-10 h-10 text-orange-500 animate-pulse" />
+                    <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500 tracking-wider uppercase">
+                      MX Nations
+                    </h1>
+                    <Flame className="w-10 h-10 text-orange-500 animate-pulse" />
+                  </div>
+                  <p className="text-gray-400 text-xl font-bold tracking-widest uppercase">Championship 2025</p>
+                </div>
+              </div>
+
+              <div className="mb-10">
+                <h2 className="text-4xl font-black text-white mb-6 text-center uppercase tracking-wider flex items-center justify-center gap-3">
+                  <Trophy className="w-10 h-10 text-yellow-500" />
+                  Classement Final
+                  <Trophy className="w-10 h-10 text-yellow-500" />
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+                  {equipesTriees.map((equipe, index) => {
+                    const stats = calculerTotalEquipe(equipe);
+                    return (
+                      <div 
+                        key={equipe} 
+                        className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${getPodiumColor(index)} p-1 transform transition-all hover:scale-105 hover:rotate-1 shadow-2xl`}
+                      >
+                        <div className="bg-gray-900 rounded-lg p-6 h-full">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="text-white">
+                                {getPodiumIcon(index)}
+                              </div>
+                              <span className="text-5xl font-black text-white">#{index + 1}</span>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+                                {stats.total}
+                              </div>
+                              <div className="text-xs text-gray-400 uppercase font-bold">Points</div>
+                            </div>
+                          </div>
+                          <h3 className="text-2xl font-black text-white uppercase tracking-wide">{equipe}</h3>
+                          {stats.pire > 0 && (
+                            <div className="mt-2 text-sm text-red-400 font-bold">
+                              Pire retiré: -{stats.pire}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="max-w-7xl mx-auto">
+                <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-wider text-center">
+                  Résultats Détaillés
+                </h2>
+                <div className="overflow-x-auto rounded-2xl shadow-2xl">
+                  <table className="w-full border-collapse bg-gray-800">
+                    <thead>
+                      <tr className="bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600">
+                        <th className="border-2 border-gray-700 px-4 py-4 text-left font-black text-white uppercase tracking-wide">Équipe</th>
+                        <th className="border-2 border-gray-700 px-4 py-4 text-left font-black text-white uppercase tracking-wide">Pilote</th>
+                        <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Race 1</th>
+                        <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Race 2</th>
+                        <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Race 3</th>
+                        <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Pire</th>
+                        <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-white uppercase">Total</th>
+                        <th className="border-2 border-gray-700 px-4 py-4 text-center font-black text-yellow-300 uppercase bg-gradient-to-r from-yellow-700 to-orange-700">Équipe</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {equipesTriees.map((equipe, equipeIndex) => {
+                        const pilotsEquipe = donnees
+                          .map((d, originalIndex) => ({ ...d, originalIndex }))
+                          .filter(d => d.equipe === equipe);
+                        const stats = calculerTotalEquipe(equipe);
+                        const infoPire = stats.infoPire;
+                        
+                        return pilotsEquipe.map((pilote, piloteIndex) => {
+                          const estPireRace1 = infoPire && infoPire.pilote === pilote.pilote && infoPire.race === 'race1';
+                          const estPireRace2 = infoPire && infoPire.pilote === pilote.pilote && infoPire.race === 'race2';
+                          const estPireRace3 = infoPire && infoPire.pilote === pilote.pilote && infoPire.race === 'race3';
+                          
+                          return (
+                            <tr 
+                              key={pilote.originalIndex} 
+                              className={`${equipeIndex % 2 === 0 ? 'bg-gray-900' : 'bg-gray-800'}`}
+                            >
+                              {piloteIndex === 0 && (
+                                <td 
+                                  rowSpan={pilotsEquipe.length} 
+                                  className="border-2 border-gray-700 px-4 py-3 font-black text-2xl text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 uppercase"
+                                >
+                                  {equipe}
+                                </td>
+                              )}
+                              <td className="border-2 border-gray-700 px-4 py-2 text-white font-bold uppercase text-sm">{pilote.pilote}</td>
+                              <td className={`border-2 border-gray-700 px-2 py-2 ${estPireRace1 ? 'bg-red-900 bg-opacity-50' : ''}`}>
+                                <input
+                                  type="number"
+                                  value={pilote.race1 ?? ''}
+                                  onChange={(e) => modifierValeur(pilote.originalIndex, 'race1', e.target.value)}
+                                  className={`w-full text-center border-2 ${estPireRace1 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-lg px-2 py-2 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-lg`}
+                                />
+                              </td>
+                              <td className={`border-2 border-gray-700 px-2 py-2 ${estPireRace2 ? 'bg-red-900 bg-opacity-50' : ''}`}>
+                                <input
+                                  type="number"
+                                  value={pilote.race2 ?? ''}
+                                  onChange={(e) => modifierValeur(pilote.originalIndex, 'race2', e.target.value)}
+                                  className={`w-full text-center border-2 ${estPireRace2 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-lg px-2 py-2 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-lg`}
+                                />
+                              </td>
+                              <td className={`border-2 border-gray-700 px-2 py-2 ${estPireRace3 ? 'bg-red-900 bg-opacity-50' : ''}`}>
+                                <input
+                                  type="number"
+                                  value={pilote.race3 ?? ''}
+                                  onChange={(e) => modifierValeur(pilote.originalIndex, 'race3', e.target.value)}
+                                  className={`w-full text-center border-2 ${estPireRace3 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-lg px-2 py-2 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-lg`}
+                                />
+                              </td>
+                              <td className={`border-2 border-gray-700 px-4 py-2 text-center font-black text-xl ${(estPireRace1 || estPireRace2 || estPireRace3) ? 'text-red-500 bg-red-900 bg-opacity-30' : 'text-gray-600'}`}>
+                                {(estPireRace1 || estPireRace2 || estPireRace3) ? stats.pire : '-'}
+                              </td>
+                              <td className="border-2 border-gray-700 px-4 py-2 text-center font-black text-2xl text-yellow-400">
+                                {pilote.totalPilote}
+                              </td>
+                              {piloteIndex === 0 && (
+                                <td 
+                                  rowSpan={pilotsEquipe.length} 
+                                  className="border-2 border-gray-700 px-4 py-3 text-center font-black text-4xl bg-gradient-to-br from-yellow-600 to-orange-700 text-white"
+                                >
+                                  {stats.total}
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        });
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="text-center mt-10 text-gray-500 font-bold uppercase tracking-wider">
+                <Flag className="w-6 h-6 inline-block mr-2" />
+                Live Standings
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(<TableauClassement />, document.getElementById('root'));
+    </script>
+</body>
+</html>
