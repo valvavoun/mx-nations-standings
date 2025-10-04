@@ -90,6 +90,34 @@
             </svg>
         );
 
+        const RaceInput = ({ value, onChange, isPire, className }) => {
+          const [tempValue, setTempValue] = useState(value);
+
+          useEffect(() => {
+            setTempValue(value);
+          }, [value]);
+
+          return (
+            <input
+              type="number"
+              inputMode="numeric"
+              value={tempValue ?? ''}
+              onChange={(e) => setTempValue(e.target.value)}
+              onBlur={() => {
+                if (tempValue !== value) {
+                  onChange(tempValue);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.target.blur();
+                }
+              }}
+              className={className}
+            />
+          );
+        };
+
         const donneesInitiales = [
             { equipe: 'FRANCE', pilote: 'ROMAIN FEBVRE', race1: null, race2: null, race3: null },
             { equipe: 'FRANCE', pilote: 'MATHIS VALIN', race1: null, race2: null, race3: null },
@@ -121,6 +149,8 @@
             const stored = localStorage.getItem('mxNationsData');
             return stored ? JSON.parse(stored) : donneesInitiales;
           });
+          
+          const [tempScores, setTempScores] = useState({});
 
           const [editMode, setEditMode] = useState({});
           const [editValues, setEditValues] = useState({});
@@ -202,8 +232,23 @@
             });
           }, []);
 
-          const reinitialiserDonnees = useCallback(() => {
-            if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les scores ?')) {
+          const reinitialiserScores = useCallback(() => {
+            if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les scores des courses ?')) {
+              setDonnees(prev => {
+                const nouvelles = prev.map(d => ({
+                  ...d,
+                  race1: null,
+                  race2: null,
+                  race3: null
+                }));
+                localStorage.setItem('mxNationsData', JSON.stringify(nouvelles));
+                return nouvelles;
+              });
+            }
+          }, []);
+
+          const reinitialiserTout = useCallback(() => {
+            if (confirm('Êtes-vous sûr de vouloir réinitialiser toutes les équipes et les scores ?')) {
               setDonnees(donneesInitiales);
               setFlagUrls(defaultFlagUrls);
               localStorage.removeItem('mxNationsData');
@@ -257,11 +302,24 @@
                     </h1>
                     <Flame className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-orange-500 animate-pulse" />
                   </div>
-                  <button
-                    onClick={reinitialiserDonnees}
-                    className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-50 group overflow-hidden rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 text-white hover:shadow-xl transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 shadow-lg flex items-center justify-center"
-                    aria-label="Réinitialiser"
-                  >
+                  <div className="fixed bottom-3 right-3 sm:bottom-4 sm:right-4 z-50 flex gap-2">
+                    <button
+                      onClick={reinitialiserScores}
+                      className="group overflow-hidden rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-orange-500 to-yellow-600 text-white hover:shadow-xl transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 shadow-lg flex items-center justify-center"
+                      title="Réinitialiser les scores"
+                      aria-label="Réinitialiser les scores"
+                    >
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 12h18"/>
+                        <path d="M12 3v18"/>
+                      </svg>
+                    </button>
+                    <button
+                      onClick={reinitialiserTout}
+                      className="group overflow-hidden rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-red-600 to-red-700 text-white hover:shadow-xl transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 shadow-lg flex items-center justify-center"
+                      title="Réinitialiser tout"
+                      aria-label="Réinitialiser tout"
+                    >
                     <svg 
                       className="w-5 h-5 sm:w-6 sm:h-6" 
                       viewBox="0 0 24 24" 
@@ -277,6 +335,7 @@
                     </svg>
                     <div className="absolute inset-0 bg-gradient-to-r from-yellow-600 via-orange-600 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full"></div>
                   </button>
+                </div>
                 </div>
               </div>
 
@@ -566,8 +625,23 @@
                                   <input
                                     type="number"
                                     inputMode="numeric"
-                                    value={pilote.race1 ?? ''}
-                                    onChange={(e) => modifierValeur(pilote.originalIndex, 'race1', e.target.value)}
+                                    value={tempScores[`${pilote.originalIndex}_race1`] ?? pilote.race1 ?? ''}
+                                    onChange={(e) => setTempScores(prev => ({ ...prev, [`${pilote.originalIndex}_race1`]: e.target.value }))}
+                                    onBlur={(e) => {
+                                      const value = tempScores[`${pilote.originalIndex}_race1`];
+                                      if (value !== undefined) {
+                                        modifierValeur(pilote.originalIndex, 'race1', value);
+                                        setTempScores(prev => {
+                                          const { [`${pilote.originalIndex}_race1`]: _, ...rest } = prev;
+                                          return rest;
+                                        });
+                                      }
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        e.target.blur();
+                                      }
+                                    }}
                                     className={`w-8 sm:w-full text-center border-2 ${estPireRace1 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                   />
                                 )}
@@ -584,8 +658,23 @@
                                   <input
                                     type="number"
                                     inputMode="numeric"
-                                    value={pilote.race2 ?? ''}
-                                    onChange={(e) => modifierValeur(pilote.originalIndex, 'race2', e.target.value)}
+                                    value={tempScores[`${pilote.originalIndex}_race2`] ?? pilote.race2 ?? ''}
+                                    onChange={(e) => setTempScores(prev => ({ ...prev, [`${pilote.originalIndex}_race2`]: e.target.value }))}
+                                    onBlur={(e) => {
+                                      const value = tempScores[`${pilote.originalIndex}_race2`];
+                                      if (value !== undefined) {
+                                        modifierValeur(pilote.originalIndex, 'race2', value);
+                                        setTempScores(prev => {
+                                          const { [`${pilote.originalIndex}_race2`]: _, ...rest } = prev;
+                                          return rest;
+                                        });
+                                      }
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        e.target.blur();
+                                      }
+                                    }}
                                     className={`w-8 sm:w-full text-center border-2 ${estPireRace2 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                   />
                                 )}
@@ -602,8 +691,23 @@
                                   <input
                                     type="number"
                                     inputMode="numeric"
-                                    value={pilote.race3 ?? ''}
-                                    onChange={(e) => modifierValeur(pilote.originalIndex, 'race3', e.target.value)}
+                                    value={tempScores[`${pilote.originalIndex}_race3`] ?? pilote.race3 ?? ''}
+                                    onChange={(e) => setTempScores(prev => ({ ...prev, [`${pilote.originalIndex}_race3`]: e.target.value }))}
+                                    onBlur={(e) => {
+                                      const value = tempScores[`${pilote.originalIndex}_race3`];
+                                      if (value !== undefined) {
+                                        modifierValeur(pilote.originalIndex, 'race3', value);
+                                        setTempScores(prev => {
+                                          const { [`${pilote.originalIndex}_race3`]: _, ...rest } = prev;
+                                          return rest;
+                                        });
+                                      }
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') {
+                                        e.target.blur();
+                                      }
+                                    }}
                                     className={`w-8 sm:w-full text-center border-2 ${estPireRace3 ? 'border-red-500 bg-red-800' : 'border-orange-600 bg-gray-700'} text-white font-bold rounded-md sm:rounded-lg px-1 sm:px-2 py-1 sm:py-2 focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-orange-500 focus:border-orange-400 text-sm sm:text-base md:text-lg`}
                                   />
                                 )}
