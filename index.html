@@ -159,9 +159,16 @@
               if (pilote.race3 !== null) tousResultats.push({ valeur: pilote.race3, pilote: pilote.pilote, race: 'race3' });
             });
             
-            const pireResultat = tousResultats.length > 0 ? Math.max(...tousResultats.map(r => r.valeur)) : 0;
-            const infoPireResultat = tousResultats.find(r => r.valeur === pireResultat);
             const sommeTotal = tousResultats.reduce((sum, r) => sum + r.valeur, 0);
+            
+            // Ne retirer le pire résultat que s'il y a au moins 2 résultats
+            let pireResultat = 0;
+            let infoPireResultat = null;
+            
+            if (tousResultats.length >= 2) {
+              pireResultat = Math.max(...tousResultats.map(r => r.valeur));
+              infoPireResultat = tousResultats.find(r => r.valeur === pireResultat);
+            }
             
             return { 
               total: sommeTotal - pireResultat, 
