@@ -350,6 +350,48 @@
               </div>
 
               <div className="max-w-7xl mx-auto">
+                <div className="mb-4 flex justify-end">
+                  <button
+                    onClick={() => {
+                      const nouvelleEquipe = {
+                        nom: 'NOUVELLE ÉQUIPE',
+                        pilotes: [
+                          { pilote: 'PILOTE 1', race1: null, race2: null, race3: null },
+                          { pilote: 'PILOTE 2', race1: null, race2: null, race3: null },
+                          { pilote: 'PILOTE 3', race1: null, race2: null, race3: null }
+                        ]
+                      };
+                      
+                      const nouvellesDonnees = [
+                        ...donnees,
+                        ...nouvelleEquipe.pilotes.map(p => ({
+                          equipe: nouvelleEquipe.nom,
+                          pilote: p.pilote,
+                          race1: p.race1,
+                          race2: p.race2,
+                          race3: p.race3
+                        }))
+                      ];
+                      
+                      const nouveauxDrapeaux = {
+                        ...flagUrls,
+                        [nouvelleEquipe.nom]: 'https://flagcdn.com/w640/xx.png' // Drapeau par défaut
+                      };
+                      
+                      setDonnees(nouvellesDonnees);
+                      setFlagUrls(nouveauxDrapeaux);
+                      localStorage.setItem('mxNationsData', JSON.stringify(nouvellesDonnees));
+                      localStorage.setItem('mxNationsFlagUrls', JSON.stringify(nouveauxDrapeaux));
+                    }}
+                    className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold rounded-lg hover:from-orange-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 uppercase tracking-wider text-sm flex items-center gap-2"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Ajouter une équipe
+                  </button>
+                </div>
                 <div className="overflow-x-auto rounded-lg sm:rounded-xl md:rounded-2xl shadow-2xl">
                   <table className="w-full border-collapse bg-gray-800 text-xs sm:text-sm">
                     <thead>
